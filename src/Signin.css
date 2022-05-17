@@ -1,0 +1,11 @@
+.signin form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signin input,
+.signin button {
+  margin-bottom: 1rem;
+  padding: 0.7rem;
+  outline: none;
+}

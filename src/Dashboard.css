@@ -1,0 +1,33 @@
+.dashboard {
+  text-align: center;
+}
+
+.all-items {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 2rem auto;
+}
+
+.single-item {
+  display: flex;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  max-width: 500px;
+}
+
+.single-item h4 {
+  margin: 0;
+  padding: 0.5rem;
+  text-align: left;
+  flex: 1;
+}
+
+.single-item button {
+  padding: 0.5rem;
+}
