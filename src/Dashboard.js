@@ -2,14 +2,40 @@ import React, { useRef, useState } from "react";
 import "./Dashboard.css";
 
 import { signOut } from "firebase/auth";
-import { auth } from "./firebaseConfig";
+import { auth, db } from "./firebaseConfig";
 
 import uuid from "react-uuid";
+
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 function Dashboard({ setMyuser }) {
   const [todo, setTodo] = useState([]);
 
   const newItem = useRef(null);
+
+  const collectionRef = collection(db, "myList");
+
+  const getData = () => {
+    getDocs(collectionRef).then((res) => {
+      setTodo(
+        res.docs.map((doc) => {
+          return {
+            ...doc.data(),
+            keyid: doc.id,
+          };
+        })
+      );
+    });
+  };
+
+  getData();
 
   const addItem = (e) => {
     e.preventDefault();
@@ -21,11 +47,19 @@ function Dashboard({ setMyuser }) {
       },
     ]);
 
+    addDoc(collectionRef, {
+      id: uuid(),
+      name: newItem.current.value,
+    }).catch((e) => alert(e.message));
+
     newItem.current.value = "";
     // newItem.current.blur();
   };
 
   const removeItem = (id) => {
+    deleteDoc(doc(db, "myList", id));
+
+    /*
     const newItems = [];
     todo.filter((item) => {
       if (item.id !== id) {
@@ -33,19 +67,20 @@ function Dashboard({ setMyuser }) {
       }
     });
     setTodo(newItems);
+    */
+    // deleteDoc(collectionRef, id);
   };
 
   const updateItem = (id) => {
     const newValue = prompt("Enter new value", "");
-    // const arrayIndex = todo.findIndex((item) => item.id === id);
 
-    // const newItems = todo;
+    console.log(id);
 
-    // newItems[arrayIndex].name = newValue;
+    updateDoc(doc(db, "myList", id), {
+      name: newValue,
+    });
 
-    // setTodo(newItems);
-    // console.log(todo);
-
+    /*
     const lists = todo.map((item) => {
       if (item.id === id) {
         return {
@@ -63,6 +98,7 @@ function Dashboard({ setMyuser }) {
     });
 
     setTodo(lists);
+    */
   };
 
   const logout = () => {
@@ -82,10 +118,10 @@ function Dashboard({ setMyuser }) {
 
       <div className="all-items">
         {todo.map((item) => (
-          <div className="single-item" key={item.id}>
+          <div className="single-item" key={item.keyid}>
             <h4>{item.name}</h4>
-            <button onClick={() => updateItem(item.id)}>EDIT</button>
-            <button onClick={() => removeItem(item.id)}>DELETE</button>
+            <button onClick={() => updateItem(item.keyid)}>EDIT</button>
+            <button onClick={() => removeItem(item.keyid)}>DELETE</button>
           </div>
         ))}
       </div>
